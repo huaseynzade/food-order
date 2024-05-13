@@ -36,8 +36,3 @@ spring:
           mime:
             charset: UTF
 
-
-
-#
-#  sendgrid:
-#    api-key: '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
