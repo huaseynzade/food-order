@@ -35,4 +35,3 @@ spring:
             required: true
           mime:
             charset: UTF
-
