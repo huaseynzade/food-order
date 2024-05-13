@@ -41,7 +41,7 @@ public class UserService {
         log.info("{} id has changed",id);
     }
     public void deleteUser(Integer id){
-        repository.findById(id).orElseThrow(() -> new NotFoundException("message"));
+        repository.findById(id).orElseThrow(() -> new NotFoundException("User Not Found"));
         repository.deleteById(id);
     }
 

@@ -73,11 +73,11 @@ public class MenuItemService {
         Pageable paging = PageRequest.of(page,3);
         Page<MenuItemsEntity> pageMenuItems;
 
+        MenuEntity menu = menuRepository.findById(menuId).orElseThrow(() -> new NotFoundException("Not Found Menu"));
+
         if (word == null){
-            MenuEntity menu = menuRepository.findById(menuId).orElseThrow(() -> new NotFoundException("Menu Not Found"));
             pageMenuItems = repository.findAllByMenu(menu,paging);
         }else{
-            MenuEntity menu = menuRepository.findById(menuId).orElseThrow(() -> new NotFoundException("Not Found Menu"));
             pageMenuItems = repository.findByNameContainsIgnoreCaseAndMenu(word,paging,menu);
         }
 

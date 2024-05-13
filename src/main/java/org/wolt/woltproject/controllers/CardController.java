@@ -33,12 +33,6 @@ public class CardController {
         service.createNewCard(cardRequestDto);
     }
 
-//    @PutMapping("/{userId}/addCard/{cardId}")
-//    public void addCardToUser(
-//            @PathVariable Integer userId,
-//            @PathVariable Integer cardId){
-//        service.addCardToUser(userId, cardId);
-//    }
 
     @GetMapping("/all/user/{userId}")
     public List<CardResponseDto> showCardsOfUser(@PathVariable Integer userId){

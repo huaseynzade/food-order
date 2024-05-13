@@ -3,6 +3,7 @@ package org.wolt.woltproject.services;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.jaxb.SpringDataJaxb;
@@ -52,7 +53,7 @@ public class OrderService {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not Found User"));
         OrderEntity orderEntity;
 
-        if (!userEntity.isActivated()){
+        if (!userEntity.isActivated()) {
             throw new ActivationException("Activate your account");
         }
 
@@ -157,6 +158,7 @@ public class OrderService {
 
 
     public List<OrderResponseDto> showOrdersByRestaurant(Integer restaurantId) {
+
         List<OrderEntity> orderList = repository.findAllByStatusIs(OrderStatusEnum.ACCEPTED);
         List<OrderEntity> restaurantOrderList = new ArrayList<>();
         for (int i = 0; i < orderList.size(); i++) {
@@ -186,7 +188,7 @@ public class OrderService {
         if (order.getStatus().equals(OrderStatusEnum.PREPARING)) {
             order.setStatus(OrderStatusEnum.IN_COURIER);
             repository.save(order);
-        }else{
+        } else {
 
         }
         CourierDetailsDto courier = CourierDetailsDto.builder().id(userEntity.getUserId()).
@@ -201,13 +203,13 @@ public class OrderService {
         }
     }
 
-    public boolean deliverOrder(Integer orderId){
+    public boolean deliverOrder(Integer orderId) {
         OrderEntity order = repository.findById(orderId).orElseThrow(() -> new NotFoundException("Order Not Found"));
-        if (order.getStatus().equals(OrderStatusEnum.IN_COURIER)){
+        if (order.getStatus().equals(OrderStatusEnum.IN_COURIER)) {
             order.setStatus(OrderStatusEnum.ARRIVED);
             repository.save(order);
             return true;
-        }else{
+        } else {
             return false;
         }
     }

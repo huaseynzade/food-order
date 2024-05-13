@@ -6,6 +6,7 @@ import org.wolt.woltproject.entities.CardEntity;
 import java.util.List;
 
 public interface CardRepository extends CrudRepository<CardEntity,Integer>{
-    List findAll();
+    @Override
+    List<CardEntity> findAll();
 
 }

@@ -87,7 +87,7 @@ public class AuthService {
         UserEntity user = repository.findById(userId).orElseThrow(() -> new NotFoundException("User Not Found"));
         String mail = user.getEmail();
         if (!LocalDateTime.now().minusMinutes(3).isAfter(user.getCodeSentTime())){
-            throw new ActivationCodeJustSent("Activation Code just sent. You can receive new code tignt now");
+            throw new ActivationCodeJustSent("Activation Code just sent. You can receive new code right now");
         }
         Random random = new Random();
         activationCode = random.nextInt(9999 - 1000 + 1) + 1000;

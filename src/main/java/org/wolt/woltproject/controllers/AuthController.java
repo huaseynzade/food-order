@@ -2,6 +2,7 @@ package org.wolt.woltproject.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.wolt.woltproject.models.LoginRequest;
@@ -16,6 +17,7 @@ public class AuthController {
     private final AuthService service;
 
     @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
     public void register(@RequestBody UserRequestDto userRequestDto) {
         service.register(userRequestDto);
     }
@@ -34,10 +36,5 @@ public class AuthController {
     public Boolean inputCode(@PathVariable Integer activationCode, HttpServletRequest request) {
         return service.inputCode(activationCode, request);
     }
-
-
-
-
-
 
 }

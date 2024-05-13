@@ -25,9 +25,11 @@ public class CardService {
     private final CardMap cardMap;
     private final CardRepository repository;
     private final UserRepository userRepository;
-    public List showCards() {
-        var entities = repository.findAll();
-        return entities.stream().map(e -> cardMap.toDto((CardEntity) e)).toList();
+    public List<CardResponseDto> showCards() {
+
+       List<CardResponseDto> list = repository.findAll().stream().map(e -> cardMap.toDto((CardEntity) e)).toList();
+
+       return list;
     }
 
     @Transactional
