@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - include:
+      file: liquibase/migrations/009-create-users-table.sql
+  - include:
+      file: liquibase/migrations/001-create-cards-table.sql
+  - include:
+      file: liquibase/migrations/003-create-menus-table.sql
+  - include:
+      file: liquibase/migrations/002-create-menu-items-table.sql
+  - include:
+      file: liquibase/migrations/004-create-orders-table.sql
+  - include:
+      file: liquibase/migrations/005-create-payments-table.sql
+  - include:
+      file: liquibase/migrations/007-create-restaurants-table.sql
+  - include:
+      file: liquibase/migrations/006-create-restaurant-owners-table.sql
+  - include:
+      file: liquibase/migrations/008-create-reviews-table.sql
