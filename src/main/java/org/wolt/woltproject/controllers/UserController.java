@@ -1,11 +1,10 @@
 package org.wolt.woltproject.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.wolt.woltproject.enums.RoleEnum;
 import org.wolt.woltproject.models.UserRequestDto;
 import org.wolt.woltproject.models.UserResponseDto;
 import org.wolt.woltproject.services.UserService;
@@ -18,28 +17,40 @@ import java.util.List;
 public class UserController {
     private final UserService service;
 
+    @Operation(
+            summary = "Show All Users"
+    )
     @GetMapping
     public List<UserResponseDto> showAllUsers() {
         return service.showAllUsers();
     }
 
+
+    @Operation(
+            summary = "Show User By Id"
+    )
     @GetMapping("/{id}")
     public UserResponseDto showUser(@PathVariable Integer id) {
         return service.showUser(id);
     }
 
 
-    @PutMapping()
-    public void updateUser(@RequestHeader Integer id,@RequestBody UserRequestDto dto) {
-        service.updateUser(id, dto);
+    @Operation(
+            summary = "Update User"
+    )
+    @PutMapping
+    public void updateUser(HttpServletRequest request,@RequestBody UserRequestDto dto) {
+        service.updateUser(request, dto);
     }
 
+    @Operation(
+            summary = "Delete User"
+    )
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Integer id) {
         service.deleteUser(id);
     }
 
-    public void showUsersByRole(RoleEnum role){
 
-    }
 }

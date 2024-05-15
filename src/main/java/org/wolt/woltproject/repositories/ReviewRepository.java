@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewRepository extends CrudRepository<ReviewsEntity,Integer> {
-    Optional findByUserAndRestaurant(UserEntity user, RestaurantEntity restaurant);
+    Optional<ReviewsEntity> findByUserAndRestaurant(UserEntity user, RestaurantEntity restaurant);
     void deleteByUserAndRestaurant(UserEntity user,RestaurantEntity restaurant);
 
-    List findAllByRestaurant(RestaurantEntity restaurant);
-    List findAllByUser(UserEntity user);
+    List<ReviewsEntity> findAllByRestaurant(RestaurantEntity restaurant);
+    List<ReviewsEntity> findAllByUser(UserEntity user);
 
     @Query("select avg(r.rating) from ReviewsEntity r where r.restaurant = :restaurantId")
     double sumRates(RestaurantEntity restaurantId);

@@ -19,9 +19,13 @@ public class RestaurantEntity {
     private String address;
     private String phoneNumber;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+
+
+    @OneToOne(cascade = CascadeType.PERSIST , mappedBy = "restaurant")
     private UserEntity owner;
     private LocalDate creationDate;
+
+
 
     //Method
     private double rating;

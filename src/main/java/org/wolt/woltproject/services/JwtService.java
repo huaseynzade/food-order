@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,9 +41,11 @@ public class JwtService {
         key = Keys.hmacShaKeyFor(keyBytes);
         return key;
     }
-    public String createToken(UserEntity client) throws Throwable {
+    public String createToken(UserEntity client){
+        log.info("ActionLog.JwtService.createToken method is started");
+
         key = initializeKey();
-        client = (UserEntity) repository.findByUsername(client.getUsername()).orElseThrow(() -> new EntityNotFoundException("CLIENT_NOT_FOUND"));
+        client =  repository.findByUsername(client.getUsername()).orElseThrow(() -> new EntityNotFoundException("CLIENT_NOT_FOUND"));
         Claims claims = Jwts.claims().setSubject(client.getUsername());
         Set<RoleEnum> authorities = Set.of(client.getRole());
         List<String> roles = new ArrayList<>();
@@ -64,7 +65,6 @@ public class JwtService {
                 .setExpiration(tokenValidity)
                 .addClaims(claimsMap)
                 .signWith(key, SignatureAlgorithm.HS512);
-        log.info("Jwt token created for user: {}", client.getUsername());
         return jwtBuilder.compact();
     }
 
@@ -101,12 +101,8 @@ public class JwtService {
         return null;
     }
 
-    public boolean validateClaims(Claims claims) throws AuthenticationException {
-        try {
-            return claims.getExpiration().after(new Date());
-        } catch (Exception e) {
-            throw e;
-        }
+    public boolean validateClaims(Claims claims){
+        return claims.getExpiration().after(new Date());
     }
 
 

@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public enum RoleEnum {
     CUSTOMER,
+    ADMIN,
     RESTAURANT,
     COURIER;
 

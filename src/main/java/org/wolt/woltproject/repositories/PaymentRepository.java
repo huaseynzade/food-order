@@ -8,5 +8,5 @@ import org.wolt.woltproject.entities.UserEntity;
 import java.util.List;
 
 public interface PaymentRepository extends CrudRepository<PaymentEntity,Integer> {
-    List findAllByUser(UserEntity entity);
+    List<PaymentEntity> findAllByUser(UserEntity entity);
 }

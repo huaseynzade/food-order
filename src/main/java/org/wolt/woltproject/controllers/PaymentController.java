@@ -1,6 +1,8 @@
 package org.wolt.woltproject.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.wolt.woltproject.models.PaymentRequestDto;
 import org.wolt.woltproject.models.PaymentResponseDto;
@@ -15,22 +17,39 @@ public class PaymentController {
     private final PaymentService service;
 
 
+    @Operation(
+            summary = "Pay for order",
+            description = "Method provides you to pay for any order"
+    )
     @PostMapping
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public void create(@RequestBody PaymentRequestDto dto) {
         service.create(dto);
     }
 
-    @GetMapping("/user/{userId}/history")
-    public List getHistory(@PathVariable Integer userId) {
+    @Operation(
+            summary = "Get Payment History",
+            description = "See Payment History"
+    )
+    @GetMapping("/{userId}/history")
+    public List<PaymentResponseDto> getHistory(@PathVariable Integer userId) {
         return service.getHistory(userId);
     }
 
+    @Operation(
+            summary = "Get Payment with its Id",
+            description = "Can see Payment with its id"
+    )
     @GetMapping("/{id}")
     public PaymentResponseDto getById(@PathVariable Integer id) {
         return service.getById(id);
     }
 
-    @PutMapping("/cancel/payment/{id}")
+    @Operation(
+            summary = "Cancel payment",
+            description = "If Order isn't preparing (Status is just ACCEPTED) then can cancel payment"
+    )
+    @PutMapping("/cancel/{id}")
     public void cancelOrder(@PathVariable Integer id) {
         service.cancelOrder(id);
     }

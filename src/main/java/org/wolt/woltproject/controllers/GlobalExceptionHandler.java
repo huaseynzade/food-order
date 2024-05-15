@@ -5,7 +5,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.EscapedErrors;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.wolt.woltproject.exceptions.*;
 
@@ -13,6 +16,26 @@ import org.wolt.woltproject.exceptions.*;
 @RequiredArgsConstructor
 @Slf4j
 public class GlobalExceptionHandler {
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    public ExceptionDto handle(HttpRequestMethodNotSupportedException exception) {
+        log.error("Method Not Allowed: {}", exception.getMessage());
+        return new ExceptionDto("Method Not Allowed: " + exception.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionDto handle(MethodArgumentNotValidException exception) {
+        log.error("Method Argument Not Valid: {}", exception.getMessage());
+        return new ExceptionDto("Method Argument Not Valid: " + exception.getMessage());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionDto handle(HttpMessageNotReadableException exception) {
+        log.error("HTTP Message Not Readable: {}", exception.getMessage());
+        return new ExceptionDto("HTTP Message Not Readable: " + exception.getMessage());
+    }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -20,21 +43,6 @@ public class GlobalExceptionHandler {
         log.error("Error -> {} " , exception.getMessage());
         return new ExceptionDto(exception.getMessage());
     }
-
-    @ExceptionHandler(UnexpectedTypeException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionDto handle(UnexpectedTypeException exception){
-        log.error("Error -> {}",exception.getMessage());
-        return new ExceptionDto(exception.getMessage());
-    }
-
-    @ExceptionHandler(PSQLException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionDto handle(PSQLException exception){
-        log.error("error -> {}",exception.getMessage());
-        return new ExceptionDto(exception.getMessage());
-    }
-
 
     @ExceptionHandler(WrongOperation.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

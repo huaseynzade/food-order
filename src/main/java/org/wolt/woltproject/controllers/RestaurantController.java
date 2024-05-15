@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,15 +36,20 @@ public class RestaurantController {
     }
 
     @Operation(
-            summary = "Get All Restaurants"
+            summary = "Get All Restaurants",
+            description = "Show All Restaurants"
     )
-    @GetMapping("/get/all")
-    public ResponseEntity<Map<String,Object>> getAll(@RequestParam(required = false) Integer page){
+    @GetMapping
+    public ResponseEntity<Map<String,Object>> getAll(@RequestParam(defaultValue = "0") Integer page){
         return service.getAll(page);
     }
 
 
-    @GetMapping("/get/filtered/")
+    @Operation(
+            summary = "Get Restaurants Filtered",
+            description = "Show All Restaurants that contains your keyword (filter)"
+    )
+    @GetMapping("/filtered")
     public ResponseEntity<Map<String,Object>> getAllFiltered(@RequestParam String word,@RequestParam(defaultValue = "0") Integer page) {
         return service.getAllFiltered(word,page);
     }
@@ -65,21 +71,19 @@ public class RestaurantController {
     }
     @Operation(summary = "Delete restaurant")
     @DeleteMapping("/{id}")
-    public void delete(Integer id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Integer id) {
         service.delete(id);
     }
 
 
 
 
-
-
-
-//    @Operation(summary = "Get menu of restaurant with its id")
-//    @GetMapping("/getMenuByRestaurant/{id}")
-//    public MenuDto getMenu(@PathVariable Integer id){
-//        return service.getMenu(id);
-//    }
-
+    @Operation(summary = "Confirm You Are owner of restaurant")
+    @PutMapping("/confirm/{restaurantId}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void confirm(HttpServletRequest request,@PathVariable Integer restaurantId) {
+        service.confirm(request, restaurantId);
+    }
 
 }

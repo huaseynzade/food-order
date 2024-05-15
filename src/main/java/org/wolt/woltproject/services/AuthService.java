@@ -39,10 +39,8 @@ public class AuthService {
     private final MailConfig mailConfig;
 
 
-    private int activationCode;
-
     public void register(UserRequestDto userRequestDto){
-        log.info("ActionLog.AuthService register method is started");
+        log.info("ActionLog.AuthService.register method is started");
         if(repository.findByUsername(userRequestDto.getUsername()).isPresent()){
             throw new UserAlreadyExistException("The username is already taken");
         }
@@ -54,6 +52,8 @@ public class AuthService {
     }
 
     public ResponseEntity<?> login(LoginRequest request){
+        log.info("ActionLog.AuthService.login method is started");
+
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
             log.info("authentication details: {}", authentication);
@@ -62,7 +62,11 @@ public class AuthService {
             String token = jwtUtil.createToken(entity);
 
             LoginResponse response = new LoginResponse(username,token);
-            return ResponseEntity.status(HttpStatus.OK).header("userId", String.valueOf(entity.getUserId())).body(response);
+            ResponseEntity<LoginResponse> responseEntity = ResponseEntity.status(HttpStatus.OK).header("userId", String.valueOf(entity.getUserId())).body(response);
+            log.info("ActionLog.AuthService.login method is finished");
+            return responseEntity;
+
+
         }catch (BadCredentialsException e){
             throw new NotFoundException("Invalid Username or password");
         }catch (Throwable e){
@@ -83,6 +87,8 @@ public class AuthService {
 
 
     public void sendActivationMail(HttpServletRequest request){
+        log.info("ActionLog.AuthService.sendActivationMail method is started");
+
         Integer userId = jwtUtil.getUserId(jwtUtil.resolveClaims(request));
         UserEntity user = repository.findById(userId).orElseThrow(() -> new NotFoundException("User Not Found"));
         String mail = user.getEmail();
@@ -90,9 +96,9 @@ public class AuthService {
             throw new ActivationCodeJustSent("Activation Code just sent. You can receive new code right now");
         }
         Random random = new Random();
-        activationCode = random.nextInt(9999 - 1000 + 1) + 1000;
+        int activationCode = random.nextInt(9999 - 1000 + 1) + 1000;
         try{
-            mailConfig.sendEmail(mail,"Activation Code","Your activation code is " +activationCode);
+            mailConfig.sendEmail(mail,"Activation Code","Your activation code is " + activationCode);
         }catch (MessagingException | UnsupportedEncodingException e){
             throw new RuntimeException(e.getMessage());
         }
@@ -100,11 +106,14 @@ public class AuthService {
         user.setActivationCode(activationCode);
         user.setCodeSentTime(LocalDateTime.now());
         repository.save(user);
+        log.info("ActionLog.AuthService.sendActivationMail method is finished");
 
     }
 
 
     public Boolean inputCode(Integer activationCode, HttpServletRequest request){
+        log.info("ActionLog.AuthService.inputCode method is started");
+
         Integer userId = jwtUtil.getUserId(jwtUtil.resolveClaims(request));
         UserEntity user = repository.findById(userId).orElseThrow();
         if (user.getActivationCode() == 0){
@@ -116,7 +125,10 @@ public class AuthService {
         }else {
             throw new WrongActivationCode("Wrong Activation Code");
         }
-        return user.isActivated();
+
+        Boolean isActivated = user.isActivated();
+        log.info("ActionLog.AuthService.inputCode method is finished");
+        return isActivated;
     }
 
 

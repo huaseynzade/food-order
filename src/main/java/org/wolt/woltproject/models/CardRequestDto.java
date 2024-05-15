@@ -18,8 +18,8 @@ public class CardRequestDto {
     @Size(min = 16,max = 16, message = "Size Must be 16")
     @NotBlank
     private String cardNumber;
-//    @Size(min = 5, max = 7)
-    @Pattern(regexp = "\\d{2}/\\d{2}", message = "Invalid expiry date. Use MM/yy format")
+
+    @Pattern(regexp = "\\d{2}/\\d{2}")
     @Future(message = "Date has expired")
     private LocalDate expDate;
     @Size(max = 3, min = 3, groups = PostValidation.class)
@@ -29,6 +29,6 @@ public class CardRequestDto {
     @JsonIgnore
     private String fullName;
 
-
+    @NotNull(message = "User ID cannot be null")
     private Integer userId;
 }

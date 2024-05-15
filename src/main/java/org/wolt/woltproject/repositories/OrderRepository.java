@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository extends CrudRepository<OrderEntity,Integer> {
-    List findAll();
+    List<OrderEntity> findAll();
 
-    Optional findByUserId(UserEntity userEntity);
+    Optional<OrderEntity> findByUserId(UserEntity userEntity);
 
     void deleteByOrderId(Integer orderId);
 
-    Optional findByStatusAndUserId(OrderStatusEnum orderStatusEnum, UserEntity user);
+    Optional<OrderEntity> findByStatusAndUserId(OrderStatusEnum orderStatusEnum, UserEntity user);
 
-    List findAllByUserId(UserEntity entity);
+    List<OrderEntity> findAllByUserId(UserEntity entity);
 
 
     List<OrderEntity> findAllByStatusIs(OrderStatusEnum status);

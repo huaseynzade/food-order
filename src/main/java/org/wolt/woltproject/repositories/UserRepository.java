@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends CrudRepository<UserEntity,Integer> {
-    List findAll();
-    Optional findByUsername(String username);
+    List<UserEntity> findAll();
+    Optional<UserEntity> findByUsername(String username);
 }

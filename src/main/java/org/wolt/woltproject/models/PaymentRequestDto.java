@@ -1,6 +1,7 @@
 package org.wolt.woltproject.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -14,8 +15,10 @@ public class PaymentRequestDto {
     }
     private Integer id;
 
+    @NotNull(message = "User ID cannot be null")
     private Integer userId;
 
+    @NotNull(message = "Card ID cannot be null")
     private Integer cardId;
 
     @JsonIgnore
