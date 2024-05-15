@@ -2,7 +2,7 @@ create table final_project.reviews
 (
     id         serial
         primary key,
-    rating     double precision not null,
+    rating     double precision,
     restaurant integer
         constraint fkl75bjsgakeoiuj3cixhgq8er3
             references final_project.restaurants,

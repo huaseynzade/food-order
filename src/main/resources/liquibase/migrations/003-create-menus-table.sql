@@ -7,4 +7,3 @@ create table final_project.menus
 
 alter table final_project.menus
     owner to postgres;
-

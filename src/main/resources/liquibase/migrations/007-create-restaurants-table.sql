@@ -5,6 +5,10 @@ create table final_project.restaurants
         unique
         constraint fk35xs5921w5r80goowpeaw3qe3
             references final_project.menus,
+    owner_user_id integer
+        unique
+        constraint fkt1fj7dabdq74u9hwwkrxe7yrq
+            references final_project.users,
     rating        double precision not null,
     restaurant_id serial
         primary key,
@@ -16,3 +20,4 @@ create table final_project.restaurants
 
 alter table final_project.restaurants
     owner to postgres;
+

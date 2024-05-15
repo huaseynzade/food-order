@@ -14,6 +14,4 @@ databaseChangeLog:
   - include:
       file: liquibase/migrations/007-create-restaurants-table.sql
   - include:
-      file: liquibase/migrations/006-create-restaurant-owners-table.sql
-  - include:
       file: liquibase/migrations/008-create-reviews-table.sql

@@ -7,3 +7,6 @@ create table final_project.order_item
         constraint fkt4dc2r9nbvbujrljv3e23iibt
             references final_project.orders
 );
+
+alter table final_project.order_item
+    owner to postgres;
