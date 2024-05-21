@@ -11,5 +11,6 @@ import java.util.List;
 
 public interface MenuItemRepository extends CrudRepository<MenuItemsEntity, Integer> {
     Page<MenuItemsEntity> findAllByMenu(MenuEntity menu, Pageable pageable);
+    List<MenuItemsEntity> findAllByMenu(MenuEntity menu);
     Page<MenuItemsEntity> findByNameContainsIgnoreCaseAndMenu(String word, Pageable pageable, MenuEntity menu);
 }

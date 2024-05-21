@@ -21,8 +21,6 @@ public class RestaurantEntity {
 
 
 
-    @OneToOne(cascade = CascadeType.PERSIST , mappedBy = "restaurant")
-    private UserEntity owner;
     private LocalDate creationDate;
 
 
@@ -40,4 +38,18 @@ public class RestaurantEntity {
     private List<ReviewsEntity> reviews;
 
 
+
+
+    @Override
+    public String toString() {
+        return "RestaurantEntity{" +
+                "restaurantId=" + restaurantId +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", address='" + address + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", creationDate=" + creationDate +
+                ", rating=" + rating +
+                '}';
+    }
 }

@@ -29,24 +29,20 @@ public class MenuItemService {
 
 
     public void create(MenuItemDto dto) {
-        log.info("ActionLog.MenuItemService.create method is started");
+        log.info("ActionLog.MenuItemService.create method is started for item {}", dto.getName());
         Integer menuId = dto.getMenuId();
         MenuItemsEntity entity = map.toEntity(dto);
         MenuEntity menu = menuRepository.findById(menuId).orElseThrow(() -> new NotFoundException("Menu Not Found"));
         entity.setMenu(menu);
         repository.save(entity);
-        menuRepository.save(menu);
-        log.info("ActionLog.MenuItemService.create method is finished");
+        log.info("ActionLog.MenuItemService.create method is finished for item {}, added to menu {}", entity.getMenuItemId(),menu.getMenuId());
     }
 
 
 
     public void update(MenuItemDto dto, Integer id) {
         log.info("ActionLog.MenuItemService.create update is started");
-
-        if (!repository.existsById(id)) {
-            throw new NotFoundException("NOT_FOUND");
-        }
+        MenuItemsEntity checkEntity = repository.findById(id).orElseThrow(() -> new NotFoundException("Item Not Found"));
         MenuItemsEntity entity = map.toEntity(dto);
         entity.setMenuItemId(id);
         repository.save(entity);
@@ -57,56 +53,26 @@ public class MenuItemService {
 
     public ResponseEntity<HashMap<String, Object>> getAll(Integer menuId, Integer page) {
         log.info("ActionLog.MenuItemService.getAll method is started");
-
         Pageable paging = PageRequest.of(page, 3);
-        Page<MenuItemsEntity> pageMenuItems;
-
-
         MenuEntity menu = menuRepository.findById(menuId).orElseThrow(() -> new NotFoundException("Menu Not Found"));
-        pageMenuItems = repository.findAllByMenu(menu, paging);
-        if (pageMenuItems.isEmpty()) {
-            throw new NotFoundException("Not Found any restaurants for your search");
-        }
-        List<MenuItemDto> dto = pageMenuItems.stream().map(map::toDto).toList();
-        HashMap<String, Object> response = new HashMap<>();
-        response.put("Items", dto);
-        response.put("Current Page", pageMenuItems.getNumber());
-        response.put("Total Pages", pageMenuItems.getTotalPages());
-        ResponseEntity<HashMap<String, Object>> responseEntity = new ResponseEntity<>(response, HttpStatus.OK);
+        Page<MenuItemsEntity> pageMenuItems = repository.findAllByMenu(menu, paging);
+        ResponseEntity<HashMap<String, Object>> responseEntity = generateResponse(pageMenuItems);
         log.info("ActionLog.MenuItemService.getAll method is finished");
-
         return responseEntity;
     }
 
     public ResponseEntity<HashMap<String, Object>> findAllFiltered(Integer menuId, String word, Integer page) {
-        log.info("ActionLog.MenuItemService.findAllFiltered method is started");
-
+        log.info("ActionLog.MenuItemService.findAllFiltered method is started for search word {}", word);
         Pageable paging = PageRequest.of(page, 3);
-        Page<MenuItemsEntity> pageMenuItems;
-
         MenuEntity menu = menuRepository.findById(menuId).orElseThrow(() -> new NotFoundException("Not Found Menu"));
-
-        if (word == null) {
-            pageMenuItems = repository.findAllByMenu(menu, paging);
-        } else {
-            pageMenuItems = repository.findByNameContainsIgnoreCaseAndMenu(word, paging, menu);
-        }
-        List<MenuItemDto> dto = pageMenuItems.stream().map(map::toDto).toList();
-        HashMap<String, Object> response = new HashMap<>();
-        response.put("Items", dto);
-        response.put("Current Page", pageMenuItems.getNumber());
-        response.put("Total Pages", pageMenuItems.getTotalPages());
-
-        ResponseEntity<HashMap<String, Object>> responseEntity = new ResponseEntity<>(response, HttpStatus.OK);
-        log.info("ActionLog.MenuItemService.findAllFiltered method is finished");
+        Page<MenuItemsEntity> pageMenuItems = checkWord(paging,menu,word);
+        ResponseEntity<HashMap<String, Object>> responseEntity = generateResponse(pageMenuItems);
+        log.info("ActionLog.MenuItemService.findAllFiltered method is finished. Results count {}", pageMenuItems.getTotalElements());
         return responseEntity;
     }
 
     public MenuItemDto getOne(Integer id) {
         log.info("ActionLog.MenuItemService.getOne method is started");
-        if (!repository.existsById(id)) {
-            throw new NotFoundException("NOT_FOUND");
-        }
         MenuItemDto menuItemDto = map.toDto(repository.findById(id).orElseThrow(() -> new NotFoundException("Not Found MenuItem")));
         log.info("ActionLog.MenuItemService.getOne method is finished");
         return menuItemDto;
@@ -114,12 +80,38 @@ public class MenuItemService {
 
     public void delete(Integer id) {
         log.info("ActionLog.MenuItemService.delete method is started");
-        if (!repository.existsById(id)) {
-            throw new NotFoundException("Not found");
-        }
+        MenuItemsEntity checkEntity = repository.findById(id).orElseThrow(() -> new NotFoundException("Item Not Found"));
         repository.deleteById(id);
         log.info("ActionLog.MenuItemService.delete method is finished");
 
+    }
+
+
+    //    Seperated Methods for short main methods
+    //
+    //
+    //
+    //
+    //
+    //
+
+    public ResponseEntity<HashMap<String,Object>> generateResponse(Page<MenuItemsEntity> pageMenuItems){
+        List<MenuItemDto> dto = pageMenuItems.stream().map(map::toDto).toList();
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("Items", dto);
+        response.put("Current Page", pageMenuItems.getNumber());
+        response.put("Total Pages", pageMenuItems.getTotalPages());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public Page<MenuItemsEntity> checkWord(Pageable paging, MenuEntity menu, String word){
+        Page<MenuItemsEntity> pageMenuItems;
+        if (word == null) {
+            pageMenuItems = repository.findAllByMenu(menu, paging);
+        } else {
+            pageMenuItems = repository.findByNameContainsIgnoreCaseAndMenu(word, paging, menu);
+        }
+        return pageMenuItems;
     }
 
 

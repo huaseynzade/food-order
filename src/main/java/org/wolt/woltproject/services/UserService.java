@@ -23,26 +23,21 @@ public class UserService {
 
 
     public UserResponseDto showUser(Integer id){
-        log.info("ActionLog.UserService.showUser method is started");
-        if (!repository.existsById(id)){
-            throw new NotFoundException("Not Found");
-        }
+        log.info("ActionLog.UserService.showUser method is started for user id {}", id);
         UserResponseDto userResponseDto = map.toDto(repository.findById(id).orElseThrow(() -> new NotFoundException("User Not Found")));
-        log.info("ActionLog.UserService.showUser method is started");
+        log.info("ActionLog.UserService.showUser method is finished for user id {}", id);
         return userResponseDto;
     }
     public List<UserResponseDto> showAllUsers(){
         log.info("ActionLog.UserService.showAllUsers method is started");
-        List<UserResponseDto> list = repository.findAll().stream().map(element -> map.toDto((UserEntity) element)).toList();
+        List<UserResponseDto> list = repository.findAll().stream().map(map::toDto).toList();
         log.info("ActionLog.UserService.showAllUsers method is started");
         return list;
     }
     public void updateUser(HttpServletRequest request, UserRequestDto dto){
         Integer id = jwtService.getUserId(jwtService.resolveClaims(request));
-                log.info("ActionLog.UserService.updateUser method is started for id {}", id);
-        if (!repository.existsById(id)){
-            throw new NotFoundException("User Not Found");
-        }
+        log.info("ActionLog.UserService.updateUser method is started for id {}", id);
+        repository.findById(id).orElseThrow(() -> new NotFoundException("User Not Found"));
         dto.setUserId(id);
         repository.save(map.toEntity(dto));
         log.info("ActionLog.UserService.updateUser method is finished for id {}", id);
@@ -54,8 +49,5 @@ public class UserService {
         log.info("ActionLog.UserService.deleteUser method is finished for id {}", id);
 
     }
-
-
-
 
 }

@@ -6,11 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.EscapedErrors;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.wolt.woltproject.exceptions.*;
+import org.wolt.woltproject.models.PasswordsDoesntMatch;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -43,6 +45,7 @@ public class GlobalExceptionHandler {
         log.error("Error -> {} " , exception.getMessage());
         return new ExceptionDto(exception.getMessage());
     }
+
 
     @ExceptionHandler(WrongOperation.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -102,7 +105,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ActivationCodeJustSent.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
     public ExceptionDto handle(ActivationCodeJustSent exception){
         log.error("error -> {}", exception.getMessage());
         return new ExceptionDto(exception.getMessage());
@@ -122,4 +125,37 @@ public class GlobalExceptionHandler {
         log.error("error -> {}", exception.getMessage());
         return new ExceptionDto(exception.getMessage());
     }
+
+    @ExceptionHandler(KeysDoesntMatch.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionDto handle(KeysDoesntMatch exception){
+        log.error("error -> {}", exception.getMessage());
+        return new ExceptionDto(exception.getMessage());
+    }
+
+
+    @ExceptionHandler(PasswordsDoesntMatch.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionDto handle(PasswordsDoesntMatch exception){
+        log.error("error -> {}", exception.getMessage());
+        return new ExceptionDto(exception.getMessage());
+    }
+
+
+    @ExceptionHandler(VerifyYouOwner.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionDto handle(VerifyYouOwner exception){
+        log.error("error -> {}", exception.getMessage());
+        return new ExceptionDto(exception.getMessage());
+    }
+
+
+    @ExceptionHandler(PdfOnlyException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionDto handle(PdfOnlyException exception){
+        log.error("error -> {}", exception.getMessage());
+        return new ExceptionDto(exception.getMessage());
+    }
+
 }
+

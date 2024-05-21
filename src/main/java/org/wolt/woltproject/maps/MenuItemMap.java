@@ -7,6 +7,7 @@ import org.wolt.woltproject.models.MenuItemDto;
 
 @Mapper(componentModel = "spring")
 public interface MenuItemMap {
+    @Mapping(source = "menuId",target = "menu.menuId")
     MenuItemsEntity toEntity(MenuItemDto dto);
 
     @Mapping(source = "menu.menuId",target = "menuId")

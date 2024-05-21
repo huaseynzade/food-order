@@ -1,6 +1,7 @@
 package org.wolt.woltproject.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class MenuItemController {
             description = "You can create a item and add that to menu"
     )
     @PostMapping
-    public void create(@RequestBody MenuItemDto dto){
+    public void create(@RequestBody @Valid MenuItemDto dto){
         service.create(dto);
     }
 
@@ -31,7 +32,7 @@ public class MenuItemController {
             description = "You can update a menu item by id with this method."
     )
     @PutMapping("/{id}")
-    public void update(@RequestBody MenuItemDto dto, @PathVariable Integer id) {
+    public void update(@RequestBody @Valid MenuItemDto dto, @PathVariable Integer id) {
         service.update(dto, id);
     }
 
@@ -49,7 +50,7 @@ public class MenuItemController {
             summary = "Show Filtered Content of Menu",
             description = "You can see items of menu with filtered keyword"
     )
-    @GetMapping("/{menuId}")
+    @GetMapping("/filtered/{menuId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<HashMap<String,Object>> findAllFiltered(@PathVariable Integer menuId,
                                                                   @RequestParam String word,

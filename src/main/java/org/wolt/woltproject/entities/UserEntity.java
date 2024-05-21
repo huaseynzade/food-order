@@ -53,12 +53,4 @@ public class UserEntity {
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderEntity> orderEntity;
 
-
-//    This field is for only restaurant owners. For CUSTOMER AND ADMINs its always null
-
-    @OneToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "restaurant")
-    private RestaurantEntity restaurant = null;
-
-
 }

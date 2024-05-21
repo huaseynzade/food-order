@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RestaurantRepository extends CrudRepository<RestaurantEntity,Integer> {
-    List findAll();
+    List<RestaurantEntity> findAll();
     Page<RestaurantEntity> findAll(Pageable pageable);
     Optional findByRestaurantId(Integer restaurantId);
 

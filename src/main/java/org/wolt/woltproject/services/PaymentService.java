@@ -43,7 +43,7 @@ public class PaymentService {
         if (orderRepository.findByStatusAndUserId(OrderStatusEnum.PENDING,user).isEmpty()){
             throw new NotFoundException("Not Found Order");
         }
-        order = (OrderEntity) orderRepository.findByStatusAndUserId(OrderStatusEnum.PENDING,user).get();
+        order = orderRepository.findByStatusAndUserId(OrderStatusEnum.PENDING,user).get();
         PaymentEntity payment = map.toEntity(dto);
         payment.setOrderEntity(order);
 
@@ -63,32 +63,24 @@ public class PaymentService {
         }
 
         repository.save(payment);
-        log.info("ActionLog.PaymentService.create method is finished id {}",userId);
+        log.info("ActionLog.PaymentService.create method is finished user id {} and created payment id {}",userId, payment.getId());
 
     }
 
     public List<PaymentResponseDto> getHistory(Integer userId){
         log.info("ActionLog.PaymentService.create method is started id {}",userId);
-
-        if (!userRepository.existsById(userId)){
-            throw new NotFoundException("Not Found");
-        }
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User Not Found"));
         if (repository.findAllByUser(user).isEmpty()){
             throw new NotFoundException("Not Found any payment");
         }
-
         List<PaymentResponseDto> list = repository.findAllByUser(user).stream().map(e -> {
             var eDto = map.toDto(e);
             eDto.setOrderId((e).getOrderEntity().getOrderId());
-            List<CardEntity> cardList = (e).getUser().getCardEntity();
-            for (CardEntity cardEntity:cardList){
-                if (Objects.equals(cardEntity.getCardId(), (e).getCard().getCardId())){
-                    eDto.setCardNumber(cardEntity.getCardNumber());
-                }
-            }
+            eDto.setCardNumber(e.getCard().getCardNumber());
             return eDto;
         }).toList();
+
+
         log.info("ActionLog.PaymentService.create method is started id {}",userId);
         return list;
     }
@@ -96,9 +88,6 @@ public class PaymentService {
     public PaymentResponseDto getById(Integer id){
         log.info("ActionLog.PaymentService.getById method is started");
 
-        if (!repository.existsById(id)){
-            throw new NotFoundException("Not Found");
-        }
         var entity = repository.findById(id).orElseThrow(() -> new NotFoundException("Payment Not Found"));
         var paymentDto = map.toDto(entity);
         paymentDto.setCardNumber(entity.getCard().getCardNumber());
@@ -121,10 +110,18 @@ public class PaymentService {
             order.setStatus(OrderStatusEnum.DECLINED);
             repository.save(payment);
             orderRepository.save(order);
+            returnMoney(payment);
         }else {
             throw new WrongOperation("You can't cancel preparing order");
         }
         log.info("ActionLog.PaymentService.cancelOrder method is finished for id {}", paymentId);
+    }
+
+//     Return User's money
+    public void returnMoney(PaymentEntity payment){
+        CardEntity card = payment.getCard();
+        card.setAmount(card.getAmount() + payment.getOrderEntity().getTotalAmount());
+        cardRepository.save(card);
     }
 
 

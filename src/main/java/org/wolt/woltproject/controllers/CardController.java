@@ -29,7 +29,7 @@ public class CardController {
     }
 
     @Operation(
-            summary = "Create a Card",
+            summary = "Add a Card",
             description = "You can create a new card with this method. After create it you can add card to a user"
     )
     @PostMapping

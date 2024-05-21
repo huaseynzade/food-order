@@ -2,6 +2,7 @@ package org.wolt.woltproject.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +50,7 @@ public class ReviewController {
             description = "If you have ordered anything you can make review about restaurant, else you can't"
     )
     @PostMapping
-    public void createReview(HttpServletRequest request, @RequestBody ReviewsDto reviewsDto) {
+    public void createReview(HttpServletRequest request, @RequestBody @Valid ReviewsDto reviewsDto) {
         service.createReview(request, reviewsDto);
     }
 
@@ -57,7 +58,7 @@ public class ReviewController {
             summary = "Update Review"
     )
     @PutMapping
-    public void editReview(HttpServletRequest request,@RequestBody ReviewsDto newReviewDto) {
+    public void editReview(HttpServletRequest request,@RequestBody @Valid ReviewsDto newReviewDto) {
         service.editReview(request, newReviewDto);
     }
 

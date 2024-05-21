@@ -1,6 +1,7 @@
 package org.wolt.woltproject.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,7 @@ public class MenuController {
             summary = "Create a Menu",
             description = "You can create a new menu with this method. After create it you can add this menu to a restaurant"
     )
-    public void createMenu(@RequestBody MenuDto menuDto){
+    public void createMenu(@RequestBody @Valid MenuDto menuDto){
         service.createMenu(menuDto);
     }
 
@@ -50,7 +51,7 @@ public class MenuController {
     )
     public void updateMenu(
             @PathVariable Integer menuId,
-            @RequestBody MenuDto dto){
+            @RequestBody @Valid MenuDto dto){
         service.updateMenu(menuId, dto);
     }
 

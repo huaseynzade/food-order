@@ -20,34 +20,26 @@ public class MenuService {
     private final MenuMap map;
     private final MenuRepository repository;
     private final RestaurantRepository restRepo;
+
     public void createMenu(MenuDto menuDto) {
         log.info("ActionLog.MenuService.createMenu method is started for id {}", menuDto.getName());
-
         MenuEntity menu = map.toEntity(menuDto);
-        if (!restRepo.existsById(menuDto.getRestaurant_id())) {
-            throw new NotFoundException("Not Found");
-        }
         RestaurantEntity restaurant = restRepo.findById(menuDto.getRestaurant_id()).orElseThrow(() -> new NotFoundException("Restaurant Not Found"));
         restaurant.setMenu(menu);
-
         repository.save(menu);
         restRepo.save(restaurant);
-        log.info("ActionLog.MenuService.createMenu method is started for id {}",menuDto.getName());
+        log.info("ActionLog.MenuService.createMenu method is started for id {}", menuDto.getName());
     }
 
     public void updateMenu(Integer menuId, MenuDto dto) {
         log.info("ActionLog.MenuService.updateMenu method is started for id {}", menuId);
-        if (repository.existsById(menuId)) {
-            MenuEntity menuEntity = map.toEntity(dto);
-            RestaurantEntity restaurant = restRepo.findById(dto.getRestaurant_id()).orElseThrow(() -> new NotFoundException("Restaurant Not Found"));
-            menuEntity.setMenuId(menuId);
-            restaurant.setMenu(menuEntity);
-            menuEntity.setRestaurant(restaurant);
-            repository.save(menuEntity);
-            restRepo.save(restaurant);
-        } else {
-            throw new NotFoundException("Not Found");
-        }
+        checkEntity(menuId);
+        MenuEntity menuEntity = map.toEntity(dto);
+        RestaurantEntity restaurant = restRepo.findById(dto.getRestaurant_id()).orElseThrow(() -> new NotFoundException("Restaurant Not Found"));
+        menuEntity.setMenuId(menuId);
+        restaurant.setMenu(menuEntity);
+        repository.save(menuEntity);
+        restRepo.save(restaurant);
         log.info("ActionLog.MenuService.updateMenu method is finished for id {}", menuId);
 
     }
@@ -65,27 +57,36 @@ public class MenuService {
     }
 
     public MenuDto getMenu(Integer id) {
-        log.info("ActionLog.MenuService.getMenu method is started");
-        if (!repository.existsById(id)) {
-            throw new NotFoundException("Not Found");
-        }
+        log.info("ActionLog.MenuService.getMenu method is started for id {}", id);
         MenuEntity menu = repository.findById(id).orElseThrow(() -> new NotFoundException("Menu Not Found"));
         MenuDto menuDto = map.toDto(menu);
         menuDto.setRestaurant_id(menu.getRestaurant().getRestaurantId());
-        log.info("ActionLog.MenuService.getMenu method is finished");
+        log.info("ActionLog.MenuService.getMenu method is finished for id {}", id);
         return menuDto;
     }
 
 
-
     public void delete(Integer id) {
-        log.info("ActionLog.MenuService.delete method is started");
-
-        if (!repository.existsById(id)) {
-            throw new NotFoundException("Not found");
-        }
+        log.info("ActionLog.MenuService.delete method is started for id {}", id);
+        checkEntity(id);
         repository.deleteById(id);
-        log.info("ActionLog.MenuService.delete method is finished");
+        log.info("ActionLog.MenuService.delete method is finished for id {}", id);
 
     }
+
+
+    //    Seperated Methods for short main methods
+    //
+    //
+    //
+    //
+    //
+    //
+
+
+    public void checkEntity(Integer id) {
+        MenuEntity checkEntity = repository.findById(id).orElseThrow(() -> new NotFoundException("Not Found Menu"));
+    }
+
+
 }

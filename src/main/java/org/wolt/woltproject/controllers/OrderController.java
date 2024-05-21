@@ -21,10 +21,10 @@ public class OrderController {
             description = "You can create a order. If You have then method will just add to it."
     )
     @PostMapping("/{item}")
-    @ResponseStatus(HttpStatus.OK)
-    public void addOrCreate(@RequestHeader Integer userId,
+    @ResponseStatus(HttpStatus.CREATED) //jwt
+    public void addOrCreate(HttpServletRequest request,
                             @PathVariable Integer item) {
-        orderService.addOrCreateOrder(userId,item);
+        orderService.addOrCreateOrder(request,item);
     }
 
     @Operation(
@@ -41,10 +41,11 @@ public class OrderController {
             description = "You can see delete item from Order"
     )
     @DeleteMapping("/{itemId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteItem(
-            @RequestHeader Integer userId,
+            HttpServletRequest request,
             @PathVariable Integer itemId) {
-        orderService.deleteItem(userId, itemId);
+        orderService.deleteItem(request, itemId);
     }
 
     @Operation(
@@ -63,9 +64,18 @@ public class OrderController {
             summary = "Show Waiting orders to Restaurant",
             description = "Restaurant can see waiting orders. This Method informs the restaurant"
     )
-    @GetMapping("/{restaurantId}")
-    public List<OrderResponseDto> showOrdersByRestaurant(@PathVariable Integer restaurantId) {
-        return orderService.showOrdersByRestaurant(restaurantId);
+    @GetMapping("/restaurant/")
+    public List<OrderResponseDto> showOrdersByRestaurant(HttpServletRequest request) {
+        return orderService.showOrdersByRestaurant(request);
+    }
+
+    @Operation(
+            summary = "Show Waiting orders to Restaurant",
+            description = "Restaurant can see waiting orders. This Method informs the restaurant"
+    )
+    @GetMapping("/courier/")
+    public List<OrderResponseDto> showOrdersByCourier(HttpServletRequest request) {
+        return orderService.showOrdersByCourier(request);
     }
 
     @Operation(
@@ -93,8 +103,8 @@ public class OrderController {
             description = "Courier Takes Order (If Status Preparing)"
     )
     @PutMapping("/{courierId}/take/{orderId}")
-    public void takeOrder(@PathVariable Integer courierId,@PathVariable Integer orderId) {
-        orderService.takeOrder(courierId,orderId);
+    public void takeOrder(HttpServletRequest request,@PathVariable Integer orderId) {
+        orderService.takeOrder(request,orderId);
     }
 
 

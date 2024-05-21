@@ -7,14 +7,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.wolt.woltproject.entities.FilesEntity;
 import org.wolt.woltproject.models.MenuDto;
 import org.wolt.woltproject.models.RestaurantDto;
 import org.wolt.woltproject.services.RestaurantService;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +37,7 @@ public class RestaurantController {
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody RestaurantDto dto){
+    public void save(@RequestBody @Valid RestaurantDto dto){
         service.save(dto);
     }
 
@@ -66,24 +72,32 @@ public class RestaurantController {
 
     @Operation(summary = "Update Restaurant")
     @PutMapping("/{id}")
-    public void update(@RequestBody RestaurantDto dto,@PathVariable Integer id){
-        service.update(dto, id);
+    public void update(@RequestBody @Valid RestaurantDto dto,@PathVariable Integer id, HttpServletRequest request){
+        service.update(dto, id, request);
     }
     @Operation(summary = "Delete restaurant")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Integer id) {
-        service.delete(id);
+    public void delete(HttpServletRequest request,@PathVariable Integer id) {
+        service.delete(request,id);
     }
 
 
+    @PostMapping(value = "/file/", consumes = {"multipart/form-data"})
+    public String sendFile(HttpServletRequest request,@RequestPart("file") MultipartFile file, Integer restaurantId) throws IOException {
+        return service.sendFile(request, file,restaurantId);
+    }
 
+    @GetMapping(value = "/file/{id}")
+    public  ResponseEntity<byte[]> showFile(@PathVariable Integer id, HttpSession session) {
+        return service.showFile(id,session);
+    }
 
-    @Operation(summary = "Confirm You Are owner of restaurant")
-    @PutMapping("/confirm/{restaurantId}")
+    @Operation(summary = "To Authorize A User as Restaurant")
+    @PutMapping("/authorize/")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void confirm(HttpServletRequest request,@PathVariable Integer restaurantId) {
-        service.confirm(request, restaurantId);
+    public void confirm(HttpServletRequest request) {
+        service.confirm(request);
     }
 
 }

@@ -41,7 +41,7 @@ public class ReviewService {
     public List<ReviewResponseDto> getAllByUser(Integer userId) {
         log.info("ActionLog.ReviewService.getAllByUser method is started");
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not Found User"));
-        List<ReviewResponseDto> userResponseDtoList = repository.findAllByUser(user).stream().map(e -> map.toDto((ReviewsEntity) e)).toList();
+        List<ReviewResponseDto> userResponseDtoList = repository.findAllByUser(user).stream().map(map::toDto).toList();
         log.info("ActionLog.ReviewService.getAllByUser method is finished");
         return userResponseDtoList;
     }
@@ -54,7 +54,7 @@ public class ReviewService {
         if (repository.findByUserAndRestaurant(user, restaurant).isEmpty()) {
             throw new NotFoundException("Not Found Review");
         }
-        ReviewResponseDto dto = map.toDto((ReviewsEntity) repository.findByUserAndRestaurant(user, restaurant).get());
+        ReviewResponseDto dto = map.toDto(repository.findByUserAndRestaurant(user, restaurant).get());
         log.info("ActionLog.ReviewService.getReview method is finished for id {}", userId);
         return dto;
     }
@@ -69,27 +69,12 @@ public class ReviewService {
         if (!orderRepository.existsByUserIdAndStatusIs(user, OrderStatusEnum.ARRIVED)){
             throw new CantDoReview("You have never take delivery.");
         }
-
-
         ReviewsEntity entity = map.toEntity(reviewsDto);
         Integer restaurantId = reviewsDto.getRestaurantId();
-        if (repository.findByUserAndRestaurant(user, restaurantRepository.findById(restaurantId)
-                        .orElseThrow(() -> new NotFoundException("Restaurant Not Found")))
-                        .isPresent()){
-            throw new AlreadyRated("You have already rated this restaurant");
-        }
-        if (!checkOrder(userId,reviewsDto.getRestaurantId())){
-            throw new CantRate("You can't rate restaurant you have never ordered anything");
-        }
+        checkIfCanRate(user,reviewsDto,restaurantId);
         RestaurantEntity restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new NotFoundException("Restaurant Not Found"));
-
-//        restaurant.setRating();
-//        restaurantRepository.save(restaurant);
-
         entity.setUser(user);
-
         repository.save(entity);
-
         double rating = repository.sumRates(restaurant);
         restaurant.setRating(rating);
         restaurantRepository.save(restaurant);
@@ -104,7 +89,7 @@ public class ReviewService {
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User Not Found"));
         RestaurantEntity restaurant = restaurantRepository.findById(newReviewDto.getRestaurantId()).orElseThrow(() -> new NotFoundException("Restaurant Not Found"));
 
-        ReviewsEntity oldReview = (ReviewsEntity) repository.findByUserAndRestaurant(user, restaurant).orElseThrow(() -> new NotFoundException("Rview Not Found"));
+        ReviewsEntity oldReview =  repository.findByUserAndRestaurant(user, restaurant).orElseThrow(() -> new NotFoundException("Review Not Found"));
 
         ReviewsEntity newReviewEntity = map.toEntity(newReviewDto);
         newReviewEntity.setId(oldReview.getId());
@@ -120,17 +105,24 @@ public class ReviewService {
         Integer userId = jwtService.getUserId(jwtService.resolveClaims(request));
         log.info("ActionLog.ReviewService..deleteReview method started by user {}", userId);
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not Found User"));
-        RestaurantEntity restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new NotFoundException("Not Found Restaunt"));
-
+        RestaurantEntity restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new NotFoundException("Not Found Restaurant"));
         if (repository.findByUserAndRestaurant(user, restaurant).isEmpty()) {
             throw new NotFoundException("Not Found");
         }
-
         repository.deleteByUserAndRestaurant(user, restaurant);
         log.info("ActionLog.ReviewService.deleteReview method finished by user {}", userId);
 
-
     }
+
+    //    Seperated Methods for short main methods
+    //
+    //
+    //
+    //
+    //
+    //
+
+
 
     private Boolean checkOrder(Integer userId, Integer restaurantId){
         log.info("ActionLog.ReviewService.checkOrder method is started");
@@ -151,6 +143,17 @@ public class ReviewService {
         }
         log.info("ActionLog.ReviewService.checkOrder method is finished");
         return orderedFromRestaurant;
+    }
+
+    public void checkIfCanRate(UserEntity user,ReviewsDto reviewsDto, Integer restaurantId){
+        if (repository.findByUserAndRestaurant(user, restaurantRepository.findById(restaurantId)
+                        .orElseThrow(() -> new NotFoundException("Restaurant Not Found")))
+                .isPresent()){
+            throw new AlreadyRated("You have already rated this restaurant");
+        }
+        if (!checkOrder(user.getUserId(),reviewsDto.getRestaurantId())){
+            throw new CantRate("You can't rate restaurant you have never ordered anything");
+        }
     }
 
 }

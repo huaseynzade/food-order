@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface PaymentRepository extends CrudRepository<PaymentEntity,Integer> {
     List<PaymentEntity> findAllByUser(UserEntity entity);
+    List<PaymentEntity> findAllByCard(CardEntity entity);
+
 }

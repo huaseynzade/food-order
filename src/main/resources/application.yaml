@@ -35,3 +35,12 @@ spring:
             required: true
           mime:
             charset: UTF
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
+server:
+  reactive:
+    session:
+      timeout: 5m
+

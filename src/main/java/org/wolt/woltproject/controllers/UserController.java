@@ -2,6 +2,7 @@ package org.wolt.woltproject.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,7 @@ public class UserController {
             summary = "Update User"
     )
     @PutMapping
-    public void updateUser(HttpServletRequest request,@RequestBody UserRequestDto dto) {
+    public void updateUser(HttpServletRequest request,@RequestBody @Valid UserRequestDto dto) {
         service.updateUser(request, dto);
     }
 
