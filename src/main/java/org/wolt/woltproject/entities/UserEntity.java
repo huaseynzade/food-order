@@ -41,6 +41,11 @@ public class UserEntity {
     // Default Value for AuthService 89
     private LocalDateTime codeSentTime = LocalDateTime.of(2020,12,12,12,11,12);
 
+
+    private Double lat;
+    private Double lon;
+
+
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
 
@@ -52,5 +57,26 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderEntity> orderEntity;
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "userId=" + userId +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", isActivated=" + isActivated +
+                ", birthDate=" + birthDate +
+                ", address='" + address + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", registerDate=" + registerDate +
+                ", activationCode=" + activationCode +
+                ", codeSentTime=" + codeSentTime +
+                ", lat=" + lat +
+                ", lon=" + lon +
+                ", role=" + role +
+                '}';
+    }
 
 }

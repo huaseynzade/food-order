@@ -1,5 +1,6 @@
 package org.wolt.woltproject.services;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,13 +33,15 @@ public class PaymentService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final CardRepository cardRepository;
+    private final JwtService jwtService;
 
-    public void create(PaymentRequestDto dto){
-        Integer userId = dto.getUserId();
+    public void create(HttpServletRequest request, Integer cardId){
+        Integer userId = jwtService.getUserId(jwtService.resolveClaims(request));
         log.info("ActionLog.PaymentService.create method is started id {}",userId);
-
+        PaymentRequestDto dto = PaymentRequestDto.builder().cardId(cardId).userId(userId).build();
+        dto.setUserId(userId);
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User Not Found"));
-        CardEntity card = cardRepository.findById(dto.getCardId()).orElseThrow(() -> new NotFoundException("Card Not Found"));
+        CardEntity card = cardRepository.findById(cardId).orElseThrow(() -> new NotFoundException("Card Not Found"));
         OrderEntity order;
         if (orderRepository.findByStatusAndUserId(OrderStatusEnum.PENDING,user).isEmpty()){
             throw new NotFoundException("Not Found Order");

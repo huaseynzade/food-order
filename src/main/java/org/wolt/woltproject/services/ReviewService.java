@@ -83,6 +83,8 @@ public class ReviewService {
     }
 
 
+
+
     public void editReview(HttpServletRequest request, ReviewsDto newReviewDto) {
         Integer userId = jwtService.getUserId(jwtService.resolveClaims(request));
         log.info("ActionLog.ReviewService.editReview method started by user {}", userId);
@@ -95,6 +97,9 @@ public class ReviewService {
         newReviewEntity.setId(oldReview.getId());
         newReviewEntity.setUser(user);
 
+        double rating = repository.sumRates(restaurant);
+        restaurant.setRating(rating);
+        restaurantRepository.save(restaurant);
         repository.save(newReviewEntity);
         log.info("ActionLog.ReviewService.editReview method finished by user {}", userId);
 

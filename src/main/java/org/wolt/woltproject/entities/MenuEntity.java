@@ -22,4 +22,13 @@ public class MenuEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "menu")
     private List<MenuItemsEntity> items;
+
+    @Override
+    public String toString() {
+        return "MenuEntity:" +
+                "menuId : " + menuId
+                +", name : " + name;
+
+
+    }
 }

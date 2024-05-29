@@ -28,5 +28,8 @@ public class RestaurantDto {
     private LocalDate creationDate;
     //Method
     private double rating;
+
+    private double lat;
+    private double lon;
 //    private MenuDto menu;
 }

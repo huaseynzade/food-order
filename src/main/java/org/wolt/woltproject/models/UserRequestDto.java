@@ -34,6 +34,10 @@ public class UserRequestDto {
     private LocalDate birthDate;
     @NotBlank(message = "Address cannot be blank")
     private String address;
+
+    private Double lat;
+    private Double lon;
+
     @NotBlank(message = "Phone number cannot be blank")
     @Pattern(regexp = "^\\+994\\d{9}$", message = "Phone number must be in the format +994xxxxxxxxx")
     private String phoneNumber;
@@ -41,4 +45,6 @@ public class UserRequestDto {
     private LocalDate registerDate;
     @NotNull(message = "Role cannot be null")
     private RoleEnum role;
+
+
 }

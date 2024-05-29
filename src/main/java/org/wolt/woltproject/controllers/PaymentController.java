@@ -1,6 +1,7 @@
 package org.wolt.woltproject.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,8 @@ public class PaymentController {
     )
     @PostMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void create(@RequestBody @Valid PaymentRequestDto dto) {
-        service.create(dto);
+    public void create(HttpServletRequest request,@RequestParam Integer cardId) {
+        service.create(request,cardId);
     }
 
     @Operation(

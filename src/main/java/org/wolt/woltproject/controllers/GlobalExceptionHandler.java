@@ -157,5 +157,13 @@ public class GlobalExceptionHandler {
         return new ExceptionDto(exception.getMessage());
     }
 
+
+
+    @ExceptionHandler(MoreThanOneRestaurant.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionDto handle(MoreThanOneRestaurant exception){
+        log.error("error -> {}", exception.getMessage());
+        return new ExceptionDto(exception.getMessage());
+    }
 }
 

@@ -18,6 +18,15 @@ import java.util.List;
 public class UserController {
     private final UserService service;
 
+
+    @Operation(
+            summary = "Show User's Profile"
+    )
+    @GetMapping("/profile")
+    public UserResponseDto showProfile(HttpServletRequest request) {
+        return service.showProfile(request);
+    }
+
     @Operation(
             summary = "Show All Users"
     )

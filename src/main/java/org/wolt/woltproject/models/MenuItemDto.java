@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MenuItemDto {
+    private Integer menuItemId;
+
     @NotBlank(message = "Name cannot be blank")
     private String name;
 

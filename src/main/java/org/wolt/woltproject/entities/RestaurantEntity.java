@@ -34,11 +34,15 @@ public class RestaurantEntity {
     private MenuEntity menu;
 
 
+
+
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private List<ReviewsEntity> reviews;
 
 
+    private double lat;
 
+    private double lon;
 
     @Override
     public String toString() {

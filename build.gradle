@@ -45,6 +45,13 @@ dependencies {
     // https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf
     implementation 'org.thymeleaf:thymeleaf:3.1.2.RELEASE'
 
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
+
 }
 
 tasks.named('test') {

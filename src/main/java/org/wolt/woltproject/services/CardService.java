@@ -1,5 +1,6 @@
 package org.wolt.woltproject.services;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class CardService {
     private final CardRepository repository;
     private final UserRepository userRepository;
     private final PaymentRepository paymentRepository;
+    private final JwtService jwtService;
     public List<CardResponseDto> showCards() {
         log.info("ActionLog.CardService.showCards method is started");
        List<CardResponseDto> list = repository.findAll().stream().map(cardMap::toDto).toList();
@@ -33,18 +35,20 @@ public class CardService {
     }
 
     @Transactional
-    public void createNewCard(CardRequestDto cardRequestDto) {
-        log.info("ActionLog.CardService.createNewCard method is started for user id {}", cardRequestDto.getUserId());
-
+    public void createNewCard(CardRequestDto cardRequestDto, HttpServletRequest request) {
+        Integer userId = jwtService.getUserId(jwtService.resolveClaims(request));
+        cardRequestDto.setUserId(userId);
+        log.info("ActionLog.CardService.createNewCard method is started for user id {}", userId);
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User Not Found"));
         CardEntity cardEntity = cardMap.toEntity(cardRequestDto);
 
-        UserEntity userEntity = userRepository.findById(cardRequestDto.getUserId()).orElseThrow(() -> new NotFoundException("User Not Found"));
         allocateCardToUser(cardEntity,userEntity);
         repository.save(cardEntity);
-        log.info("ActionLog.CardService.createNewCard method is finished for user id {}", cardRequestDto.getUserId());
+        log.info("ActionLog.CardService.createNewCard method is finished for user id {}", userId);
     }
 
-    public List<CardResponseDto> showCardsOfUser(Integer userId) {
+    public List<CardResponseDto> showCardsOfUser(HttpServletRequest request) {
+        Integer userId = jwtService.getUserId(jwtService.resolveClaims(request));
         log.info("ActionLog.CardService.showCardsOfUser method is started for user {}", userId);
 
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User Not Found"));
@@ -86,11 +90,14 @@ public class CardService {
     }
 
     public void breakConnectivity(CardEntity cardEntity){
-        List<PaymentEntity> paymentEntities = paymentRepository.findAllByCard(cardEntity);
+        if(paymentRepository.existsByCard(cardEntity)) {
 
-        for (PaymentEntity payment:paymentEntities){
-            payment.setCard(null);
-            paymentRepository.save(payment);
+            List<PaymentEntity> paymentEntities = paymentRepository.findAllByCard(cardEntity);
+
+            for (PaymentEntity payment : paymentEntities) {
+                payment.setCard(null);
+                paymentRepository.save(payment);
+            }
         }
     }
 

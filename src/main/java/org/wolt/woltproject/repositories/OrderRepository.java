@@ -1,5 +1,6 @@
 package org.wolt.woltproject.repositories;
 
+import org.hibernate.query.Order;
 import org.springframework.data.repository.CrudRepository;
 import org.wolt.woltproject.entities.OrderEntity;
 import org.wolt.woltproject.entities.UserEntity;
@@ -25,6 +26,7 @@ public interface OrderRepository extends CrudRepository<OrderEntity,Integer> {
     List<OrderEntity> findAllByUserIdAndStatusIsNot(UserEntity userEntity, OrderStatusEnum statusEnum);
 
     boolean existsByUserIdAndStatusIs(UserEntity user, OrderStatusEnum statusEnum);
+
 
 
 }

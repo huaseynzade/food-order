@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CardResponseDto {
-    private String cardId;
+    private Integer cardId;
     private String cardNumber;
     private String expDate;
 

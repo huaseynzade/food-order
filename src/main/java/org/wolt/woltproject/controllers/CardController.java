@@ -1,6 +1,7 @@
 package org.wolt.woltproject.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,17 +35,17 @@ public class CardController {
     )
     @PostMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void createNewCard(@RequestBody @Validated(value = PostValidation.class) CardRequestDto cardRequestDto){
-        service.createNewCard(cardRequestDto);
+    public void createNewCard(@RequestBody @Valid CardRequestDto cardRequestDto, HttpServletRequest request){
+        service.createNewCard(cardRequestDto, request);
     }
 
     @Operation(
             summary = "Show User's Card",
             description = "This method shows user's all cards."
     )
-    @GetMapping("/{userId}")
-    public List<CardResponseDto> showCardsOfUser(@PathVariable Integer userId){
-        return service.showCardsOfUser(userId);
+    @GetMapping("/user")
+    public List<CardResponseDto> showCardsOfUser(HttpServletRequest request){
+        return service.showCardsOfUser(request);
     }
 
 

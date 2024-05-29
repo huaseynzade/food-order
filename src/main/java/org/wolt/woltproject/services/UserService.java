@@ -21,6 +21,13 @@ public class UserService {
     private final UserMap map;
     private final JwtService jwtService;
 
+    public UserResponseDto showProfile(HttpServletRequest request){
+        Integer id = jwtService.getUserId(jwtService.resolveClaims(request));
+        log.info("ActionLog.UserService.showProfile method is started for user id {}", id);
+        UserResponseDto userResponseDto = map.toDto(repository.findById(id).orElseThrow(() -> new NotFoundException("User Not Found")));
+        log.info("ActionLog.UserService.showProfile method is finished for user id {}", id);
+        return userResponseDto;
+    }
 
     public UserResponseDto showUser(Integer id){
         log.info("ActionLog.UserService.showUser method is started for user id {}", id);

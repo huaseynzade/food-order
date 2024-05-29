@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
                 ),
                 title = "Wolt Project",
                 description = "My Final Project for Matrix",
-                version = "1.1"
+                version = "1.9"
         ),
         servers = {
                 @Server(

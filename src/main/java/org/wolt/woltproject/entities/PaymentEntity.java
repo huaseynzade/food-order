@@ -1,7 +1,10 @@
 package org.wolt.woltproject.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.catalina.User;
 import org.wolt.woltproject.enums.PaymentStatus;
 
@@ -32,4 +35,15 @@ public class PaymentEntity {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "card_id")
     private CardEntity card;
+
+    @Override
+    public String toString() {
+        return "PaymentEntity{" +
+                "id=" + id +
+                ", status=" + status +
+                ", paymentDate=" + paymentDate +
+                ", user=" + (user != null ? user.getUserId() : null) +
+                ", card=" + (card != null ? card.getCardId() : null) +
+                '}';
+    }
 }

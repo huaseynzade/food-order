@@ -113,7 +113,7 @@ public class AuthService {
         UserEntity user = repository.findById(userId).orElseThrow(() -> new NotFoundException("User Not Found"));
         String mail = user.getEmail();
 
-        checkIfCodeAlreadySentIn3Minutes(user);
+//        checkIfCodeAlreadySentIn3Minutes(user);
 
         int activationCode = generateActivationCode();
         sendActivationMail(mail, activationCode);
@@ -205,11 +205,11 @@ public class AuthService {
         }
     }
 
-    public void checkIfCodeAlreadySentIn3Minutes(UserEntity user) {
-        if (!LocalDateTime.now().minusMinutes(3).isAfter(user.getCodeSentTime())) {
-            throw new ActivationCodeJustSent("Activation Code just sent. You can receive new code right now");
-        }
-    }
+//    public void checkIfCodeAlreadySentIn3Minutes(UserEntity user) {
+//        if (!LocalDateTime.now().minusMinutes(3).isAfter(user.getCodeSentTime())) {
+//            throw new ActivationCodeJustSent("Activation Code just sent. You can receive new code right now");
+//        }
+//    }
 
     public void checkEquality(Integer activationCode, UserEntity user) {
         if (Objects.equals(activationCode, user.getActivationCode())) {
